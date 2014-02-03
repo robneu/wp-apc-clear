@@ -200,7 +200,7 @@ class WP_APC_Clear {
 	 */
 	function admin_notices() {
 		// Do nothing if we're not on the plugin admin page.
-		if ( ! $this->is_admin_page() ||  ! isset( $_POST['clear-apc'] ) ) {
+		if ( ! $this->is_admin_page() || ! isset( $_POST['clear-apc'] ) ) {
 			return;
 		}
 
@@ -254,7 +254,7 @@ class WP_APC_Clear {
 		$args = array(
 			'id'    => 'clear-apc',
 			'title' => 'Clear APC',
-			'href'  => '/wp-admin/tools.php?page=clear-php-apc',
+			'href'  => '/wp-admin/tools.php?page=wp-clear-apc',
 			'meta'  => array(
 				'class' => 'clear-apc',
 				'title' => 'Clear APC'
