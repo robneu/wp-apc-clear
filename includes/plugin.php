@@ -89,7 +89,6 @@ class WP_APC_Clear {
 		if ( ! defined( 'WPAPCC_DIR' ) ) {
 			define( 'WPAPCC_DIR', plugin_dir_path( WPAPCC_FILE ) );
 		}
-
 	}
 
 	/**
@@ -124,14 +123,13 @@ class WP_APC_Clear {
 	/**
 	 * Scripts and stylesheets
 	 *
-	 * @return System_Snapshot_Report
+	 * @return null if not on the plugin page.
 	 */
-
 	public function scripts_styles() {
 		if ( ! $this->is_admin_page() ) {
 			return;
 		}
-		wp_enqueue_style( 'wp-apc-clear', WPAPCC_URL . 'assets/css/admin-style.css', array(), BACON_BAR_VERSION );
+		wp_enqueue_style( 'wp-apc-clear', WPAPCC_URL . 'assets/css/admin-style.css', array(), WPAPCC_VERSION );
 	}
 
 	/**
