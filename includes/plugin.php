@@ -254,7 +254,7 @@ class WP_APC_Clear {
 		$args = array(
 			'id'    => 'clear-apc',
 			'title' => 'Clear APC',
-			'href'  => '/wp-admin/tools.php?page=clear_php_apc',
+			'href'  => '/wp-admin/tools.php?page=clear-php-apc',
 			'meta'  => array(
 				'class' => 'clear-apc',
 				'title' => 'Clear APC'
