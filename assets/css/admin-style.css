@@ -1,0 +1,12 @@
+@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono);
+
+.wp-clear-apc-wrap textarea {
+    color: #000000;
+    display: block;
+    font-family: 'Ubuntu Mono', sans-serif;
+    min-height: 600px;
+    overflow: auto;
+    padding: 10px 0 10px 10px;
+    white-space: pre;
+    width: 65%;
+}
