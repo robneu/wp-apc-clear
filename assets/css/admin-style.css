@@ -1,12 +1,123 @@
 @import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono);
 
-.wp-clear-apc-wrap textarea {
-    color: #000000;
-    display: block;
-    font-family: 'Ubuntu Mono', sans-serif;
-    min-height: 600px;
-    overflow: auto;
-    padding: 10px 0 10px 10px;
-    white-space: pre;
-    width: 65%;
+.wp-clear-apc-wrap .meta-box-sortables {
+	float: left;
+	max-width: 700px;
+	width: 700px;
+}
+
+.wpapcc-tab {
+	display: none;
+	max-width: 700px;
+}
+
+.wpapcc-tab.active {
+	display: block;
+}
+
+.wp-clear-apc-wrap pre {
+	margin: 0;
+	line-height: 0;
+}
+
+.wp-clear-apc-wrap pre code {
+	font-family: 'Ubuntu Mono', sans-serif;
+	line-height: 1.3;
+	max-height: 600px;
+	overflow: scroll;
+	width: 100%;
+}
+
+/* Tomorrow Night Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-title {
+  color: #969896;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-regexp,
+.ruby .hljs-constant,
+.xml .hljs-tag .hljs-title,
+.xml .hljs-pi,
+.xml .hljs-doctype,
+.html .hljs-doctype,
+.css .hljs-id,
+.css .hljs-class,
+.css .hljs-pseudo {
+  color: #cc6666;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-preprocessor,
+.hljs-pragma,
+.hljs-built_in,
+.hljs-literal,
+.hljs-params,
+.hljs-constant {
+  color: #de935f;
+}
+
+/* Tomorrow Yellow */
+.ruby .hljs-class .hljs-title,
+.css .hljs-rules .hljs-attribute {
+  color: #f0c674;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-value,
+.hljs-inheritance,
+.hljs-header,
+.ruby .hljs-symbol,
+.xml .hljs-cdata {
+  color: #b5bd68;
+}
+
+/* Tomorrow Aqua */
+.css .hljs-hexcolor {
+  color: #8abeb7;
+}
+
+/* Tomorrow Blue */
+.hljs-function,
+.python .hljs-decorator,
+.python .hljs-title,
+.ruby .hljs-function .hljs-title,
+.ruby .hljs-title .hljs-keyword,
+.perl .hljs-sub,
+.javascript .hljs-title,
+.coffeescript .hljs-title {
+  color: #81a2be;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.javascript .hljs-function {
+  color: #b294bb;
+}
+
+.hljs {
+  display: block;
+  background: #1d1f21;
+  color: #c5c8c6;
+  padding: 0.5em;
+}
+
+.coffeescript .javascript,
+.javascript .xml,
+.tex .hljs-formula,
+.xml .javascript,
+.xml .vbscript,
+.xml .css,
+.xml .hljs-cdata {
+  opacity: 0.5;
 }
