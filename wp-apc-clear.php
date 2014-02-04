@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WP APC Clear
-Plugin URI: https://github.com/fatmedia/wp-apc-clear
+Plugin URI: https://github.com/wpbacon/wp-apc-clear
 Description: This is a simple, single purpose plugin to clear the APC cache.
 Author: Robert Neu, TJ Stein
 Version: 0.2.0
