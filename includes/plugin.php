@@ -62,8 +62,7 @@ class WP_APC_Clear {
 	 * @return WP_APC_Clear
 	 */
 	public function textdomain() {
-
-		load_plugin_textdomain( 'wpapcc', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'wpapcc', false, dirname( plugin_basename( __FILE__ ) ) . '/language/' );
 	}
 
 	/**
@@ -96,13 +95,18 @@ class WP_APC_Clear {
 	 *
 	 * @peram $cache_type the type of cache to clear.
 	 */
-	function apc_clear( $cache_type ) {
-		// Set the default cache type to opcode.
-		if ( ! $cache_type ) {
-			$cache_type = 'opcode';
+	function apc_clear( $cache_type = '' ) {
+
+		// Use the built-in APC cache clear function.
+		$cache_clear = apc_clear_cache( $cache_type );
+
+		// Use the WP APC Back end flush if it exists and we're not clearing the system cache.
+		if ( function_exists( 'wp_cache_flush' ) && ! empty( $cache_type ) ) {
+			$cache_clear = wp_cache_flush();
 		}
+
 		// Clear the cache.
-		apc_clear_cache( $cache_type );
+		return $cache_clear;
 	}
 
 	/**
@@ -129,20 +133,22 @@ class WP_APC_Clear {
 		if ( ! $this->is_admin_page() ) {
 			return;
 		}
-		wp_enqueue_style( 'wp-apc-clear', WPAPCC_URL . 'assets/css/admin-style.css', array(), WPAPCC_VERSION );
+		wp_enqueue_style(  'wp-apc-clear',  WPAPCC_URL . 'assets/css/admin-style.css', array(), WPAPCC_VERSION );
+		wp_enqueue_script( 'highlight',     WPAPCC_URL . 'assets/js/highlight.pack.js', array(), WPAPCC_VERSION );
+		wp_enqueue_script( 'wp-apc-admin',  WPAPCC_URL . 'assets/js/admin.js', array( 'jquery', 'highlight' ), WPAPCC_VERSION );
 	}
 
 	/**
 	 * Add Clear APC menu under Tools menu.
 	 *
-	 * @global $wpapccf_admin_page
+	 * @global $wpapcc_admin_page
 	 */
 	function create_admin_page() {
-		add_management_page( __( 'WP Clear APC', 'wpapcc'), __( 'Clear APC', 'wpapcc'), 'manage_options', 'wp-clear-apc', array( $this, 'apc_clear_page' ) );
+		add_management_page( __( 'WP Clear APC', 'wpapcc'), __( 'Manage APC', 'wpapcc'), 'manage_options', 'wp-clear-apc', array( $this, 'apc_clear_page' ) );
 	}
 
 	/**
-	 * Display APC clear report.
+	 * Display the WP APC Clear admin page.
 	 *
 	 * @return null if user can't manage options.
 	 */
@@ -151,51 +157,55 @@ class WP_APC_Clear {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
+		// Set a url for the APC Manual page.
+		$url = 'http://www.php.net/manual/en/ref.apc.php';
+		// Set the link text to eplxain the plugin.
+		$apc_link = sprintf( __( 'This tool is meant to clear cached data stored in APC. For more information about how APC works, visit the <a target="_blank" href="%s">APC manual page</a>.', 'wpapcc' ), esc_url( $url ) );
 		?>
-
 		<div class="wrap wp-clear-apc-wrap">
 			<div class="icon32" id="icon-tools"><br></div>
-			<h2><?php _e( 'WP Clear APC', 'wpapccf' ) ?></h2>
+			<h2><?php _e( 'WP Clear APC', 'wpapcc' ) ?></h2>
+			<p><?php echo $apc_link; ?></p>
 			<form action="<?php echo esc_url( admin_url( 'tools.php?page=wp-clear-apc' ) ); ?>" method="post" dir="ltr">
 				<p>
-					<input type="submit" value="<?php _e( 'Clear Opcode Cache', 'wpapcc' ) ?>" class="button button-primary clear-opcode" name="clear-apc">
-					<input type="submit" value="<?php _e( 'Clear User Cache', 'wpapcc' ) ?>" class="button button-secondary clear-user" name="clear-apc">
+					<input type="submit" value="<?php _e( 'Clear User Cache', 'wpapcc' ) ?>" class="button button-primary clear-user" name="clear-apc">
+					<input type="submit" value="<?php _e( 'Clear System Cache', 'wpapcc' ) ?>" class="button button-secondary clear-system" name="clear-apc">
 				</p>
-				<?php $this->clear_the_cache(); ?>
-				<?php $this->debug_info(); ?>
 			</form>
+			<?php $this->clear_the_cache(); ?>
+			<?php $this->debug_info(); ?>
 		</div>
 
 	<?php }
 
 	/**
-	 * Clear the cache.
+	 * Clear the cache when the user submits a form.
 	 *
-	 * @global $wpapccf_admin_page
-	 * @return null if we're not on the plugin page.
+	 * @return null if the user hasn't submitted the cache clearing form.
 	 */
 	function clear_the_cache() {
-		if ( !isset( $_POST['clear-apc'] ) )
+		if ( !isset( $_POST['clear-apc'] ) ) {
 			return;
-
-		if ( ! get_option( 'wpapccf_cache_status' ) ) {
-			add_option( 'wpapccf_cache_status', 'stale', '', 'no' );
 		}
 
-		if ( $_POST['clear-apc'] === __( 'Clear Opcode Cache', 'wpapcc' ) ) {
-			$this->apc_clear();
-			update_option( 'wpapccf_cache_status', 'opcode-cleared' );
+		if ( ! get_option( 'wpapcc_cache_status' ) ) {
+			add_option( 'wpapcc_cache_status', 'stale', '', 'no' );
 		}
-		elseif ( $_POST['clear-apc'] === __( 'Clear User Cache', 'wpapcc' ) ) {
+
+		if ( $_POST['clear-apc'] === __( 'Clear User Cache', 'wpapcc' ) ) {
+			update_option( 'wpapcc_cache_status', 'user-cleared' );
 			$this->apc_clear( 'user' );
-			update_option( 'wpapccf_cache_status', 'user-cleared' );
+		}
+		elseif ( $_POST['clear-apc'] === __( 'Clear System Cache', 'wpapcc' ) ) {
+			update_option( 'wpapcc_cache_status', 'system-cleared' );
+			$this->apc_clear();
 		}
 	}
 
 	/**
 	 * Add notices to the admin page to show if the cache has been cleard.
 	 *
-	 * @global $wpapccf_admin_page
+	 * @global $wpapcc_admin_page
 	 * @return null if we're not on the plugin page.
 	 */
 	function admin_notices() {
@@ -205,39 +215,59 @@ class WP_APC_Clear {
 		}
 
 		// Get the current cache status.
-		$cache_status = get_option( 'wpapccf_cache_status' );
+		$cache_status = get_option( 'wpapcc_cache_status' );
 
 		// Display an error if the cache is stale.
 		$notice = '<div id="message" class="error">';
-			$notice .= '<p>' . __( 'Clearing APC has failed!', 'wpapccf' ) . '</p>';
+			$notice .= '<p>' . __( 'Clearing APC has failed!', 'wpapcc' ) . '</p>';
 		$notice .= '</div>';
 
 		// Display a success notice if the cache has been cleared.
-		if ( 'opcode-cleared' === $cache_status ) {
+		if ( 'user-cleared' === $cache_status ) {
 			$notice = '<div id="message" class="updated">';
-				$notice .= '<p>' . __( 'APC opcode cache has been cleared!', 'wpapccf' ) . '</p>';
+				$notice .= '<p>' . __( 'APC user cache has been cleared!', 'wpapcc' ) . '</p>';
 			$notice .= '</div>';
 		}
-		elseif ( 'user-cleared' === $cache_status ) {
+		if ( 'system-cleared' === $cache_status ) {
 			$notice = '<div id="message" class="updated">';
-				$notice .= '<p>' . __( 'APC user cache has been cleared!', 'wpapccf' ) . '</p>';
+				$notice .= '<p>' . __( 'APC system cache has been cleared!', 'wpapcc' ) . '</p>';
 			$notice .= '</div>';
 		}
 
 		// Set the cache back to stale.
-		update_option( 'wpapccf_cache_status', 'stale' );
+		update_option( 'wpapcc_cache_status', 'stale' );
 
 		echo $notice;
 	}
 
-	function debug_info() {
-		if ( ! isset( $_POST['clear-apc'] ) ) {
-			return;
-		}
-		echo '<p>' . __( 'Here\'s some information about APC for debugging:', 'wpapccf' ) .'</p>';
-		echo '<textarea name="wp-clear-apc" readonly="readonly" class="wp-clear-apc">';
-			print_r( apc_cache_info() );
-		echo '</textarea>';
+	function debug_info() { ?>
+		<div id="wpapcc_content_top" class="postbox-container">
+			<div class="meta-box-sortables">
+				<h2 id="wpapcc-tabs" class="nav-tab-wrapper">
+					<a href="#top#user-cache" id="user-cache-tab" class="nav-tab"><?php _e('APC User Cache', 'wpapcc' ); ?></a>
+					<a href="#top#system-cache" id="system-cache-tab" class="nav-tab"><?php _e('APC System Cache', 'wpapcc' ); ?></a>
+				</h2>
+				<div class="tabwrapper>">
+					<div class="wpapcc-tab" id="user-cache">
+						<p><?php _e( 'Here\'s some information about the APC user cache for debugging:', 'wpapcc' ) ?></p>
+						<pre class="wp-clear-apc">
+							<code class="php">
+							<?php print_r( apc_cache_info( 'user' ) ); ?>
+							</code>
+						</pre>
+					</div>
+					<div class="wpapcc-tab" id="system-cache">
+						<p><?php _e( 'Here\'s some information about the APC system cache for debugging:', 'wpapcc' ) ?></p>
+						<pre class="wp-clear-apc">
+							<code class="php">
+							<?php print_r( apc_cache_info() ); ?>
+							</code>
+						</pre>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
@@ -252,12 +282,12 @@ class WP_APC_Clear {
 		}
 
 		$args = array(
-			'id'    => 'clear-apc',
-			'title' => 'Clear APC',
+			'id'    => 'manage-apc',
+			'title' => 'Manage APC',
 			'href'  => '/wp-admin/tools.php?page=wp-clear-apc',
 			'meta'  => array(
-				'class' => 'clear-apc',
-				'title' => 'Clear APC'
+				'class' => 'manage-apc',
+				'title' => 'Manage APC'
 			)
 		);
 
