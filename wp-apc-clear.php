@@ -4,7 +4,7 @@ Plugin Name: WP APC Clear
 Plugin URI: https://github.com/wpbacon/wp-apc-clear
 Description: This is a simple, single purpose plugin to clear the APC cache.
 Author: Robert Neu, TJ Stein
-Version: 0.2.0
+Version: 0.2.1
 Author URI: http://wpbacon.com
 License: GPL2+
 */
@@ -21,13 +21,14 @@ License: GPL2+
 defined( 'WPINC' ) or die;
 
 // Grab this directory
-$_wpapcf_dir = dirname( __FILE__ ) . '/';
+$_wpapcc_dir = dirname( __FILE__ ) . '/';
 
 // Include our core plugin files.
-include( $_wpapcf_dir . 'includes/plugin.php' );
+include( $_wpapcc_dir . 'includes/install.php' );
+include( $_wpapcc_dir . 'includes/plugin.php' );
 
 // Clean up
-unset( $_wpapcf_dir );
+unset( $_wpapcc_dir );
 
 // Instantiate our class
 $_wp_apc_clear = WP_APC_Clear::getInstance();
