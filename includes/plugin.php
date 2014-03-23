@@ -201,13 +201,13 @@ class WP_APC_Clear {
 		}
 		// Clear the user cache and update the cache status accordingly.
 		if ( $_POST['clear-apc'] === __( 'Clear User Cache', 'wpapcc' ) ) {
-			$this->apc_clear( 'user' );
 			update_option( 'wpapcc_cache_status', 'user-cleared' );
+			$this->apc_clear( 'user' );
 		}
 		// Clear the system cache and update the cache status accordingly.
 		elseif ( $_POST['clear-apc'] === __( 'Clear System Cache', 'wpapcc' ) ) {
-			$this->apc_clear();
 			update_option( 'wpapcc_cache_status', 'system-cleared' );
+			$this->apc_clear();
 		}
 	}
 
