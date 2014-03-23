@@ -15,6 +15,12 @@ defined( 'WPINC' ) or die;
 // Grab the plugin file.
 $_wpapcc_plugin_file = $_wpapcc_dir . 'wp-apc-clear.php';
 
+/**
+ * Check to see if APC is installed or enabled.
+ *
+ * @since 0.2.1
+ * @return bool
+ */
 function wpapcc_is_apc_installed() {
 	if ( extension_loaded( 'apc' ) || ini_get( 'apc.enabled' ) ) {
 		return true;
@@ -27,7 +33,7 @@ function wpapcc_is_apc_installed() {
  *
  * Runs on plugin install and checks to make sure Genesis is activated.
  *
- * @since 1.0
+ * @since 0.2.1
  * @return void
  */
 function wpapcc_install( $_wpapcc_plugin_file ) {
